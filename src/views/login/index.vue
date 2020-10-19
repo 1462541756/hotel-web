@@ -5,11 +5,11 @@
                :model="loginForm"
                :rules="loginRules"
                ref="loginForm"
-               label-position="left">
+               label-position="right">
         <div style="text-align: center">
-          <svg-icon icon-class="login-mall" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
+          <svg-icon icon-class="login-hotel" style="width: 56px;height: 56px;color: #409EFF"></svg-icon>
         </div>
-        <h2 class="login-title color-main">mall-admin-web</h2>
+        <h2 class="login-title color-main">旅店后台管理系统</h2>
         <el-form-item prop="username">
           <el-input name="username"
                     type="text"
@@ -41,32 +41,101 @@
             登录
           </el-button>
           <el-button style="width: 45%" type="primary" @click.native.prevent="handleTry">
-            获取体验账号
+            注册
           </el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <img :src="login_center_bg" class="login-center-layout">
     <el-dialog
-      title="公众号二维码"
+      title="账号注册"
       :visible.sync="dialogVisible"
       :show-close="false"
       :center="true"
       width="30%">
       <div style="text-align: center">
-        <span class="font-title-large"><span class="color-main font-extra-large">关注公众号</span>回复<span class="color-main font-extra-large">体验</span>获取体验账号</span>
-        <br>
-        <img src="http://macro-oss.oss-cn-shenzhen.aliyuncs.com/mall/banner/qrcode_for_macrozheng_258.jpg" width="160" height="160" style="margin-top: 10px">
+          <el-form
+                   :rules="registerRules"
+                   ref="registerForm"
+                   :model="registerForm"
+                   label-width="20%"
+                   size="medium">
+
+            <el-form-item label="用户名：" prop="username">
+              <el-input type="text"
+                        class="register-form"
+                        v-model="registerForm.username"
+                        maxlength="12"
+                        minlength="3"
+                        placeholder="请输入用户名">
+                <span slot="prefix"><svg-icon icon-class="user" class="color-main"></svg-icon></span>
+              </el-input>
+            </el-form-item>
+
+
+            <el-form-item label="密码：" prop="password">
+              <el-input :type="pwdType"
+                        class="register-form"
+                        v-model="registerForm.password"
+                        maxlength="12"
+                        minlength="3"
+                        placeholder="请输入密码">
+                 <span slot="prefix"><svg-icon icon-class="password" class="color-main"></svg-icon></span>
+                 <span slot="suffix" @click="showPwd"><svg-icon icon-class="eye" class="color-main"></svg-icon></span>
+              </el-input>
+            </el-form-item>
+
+
+            <el-form-item label="确认密码：" prop="check">
+              <el-input
+                        :type="checkType"
+                        class="register-form"
+                        v-model="registerForm.check"
+                        maxlength="12"
+                        minlength="3"
+                        placeholder="请输入确认密码">
+                <span slot="prefix"><svg-icon icon-class="password" class="color-main"></svg-icon></span>
+                <span slot="suffix" @click="showCheck"><svg-icon icon-class="eye" class="color-main"></svg-icon></span>
+              </el-input>
+            </el-form-item>
+
+            <el-form-item label="邮箱：" prop="mail">
+              <el-input
+                type="text"
+                class="register-form"
+                v-model="registerForm.mail"
+                placeholder="请输入邮箱">
+              </el-input>
+            </el-form-item>
+
+
+            <el-form-item label="验证码：" prop="verificationCode" >
+
+                <el-input type="text"
+                          class="register-form"
+                          v-model="registerForm.verificationCode"
+                          maxlength="6"
+                          minlength="6"
+                          style="width: 60%;float: left"
+                          placeholder="请输入验证码">
+                </el-input>
+                <el-button :type=type style="float: right;width: 35%" :disabled="disabled" @click="handleSentVerificationCode">{{buttonWord}}</el-button>
+            </el-form-item>
+
+          </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="dialogConfirm">确定</el-button>
+    <el-button type="primary" :loading="registerLoading" @click.native.prevent="handleRegister">立即注册</el-button>
       </span>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
-  import {isvalidUsername} from '@/utils/validate';
+  import {sentVerificationCode} from '@/api/mail';
+  import {register as handleRegister} from '@/api/register';
+  import {isvalidUsername,isValidateMail} from '@/utils/validate';
   import {setSupport,getSupport,setCookie,getCookie} from '@/utils/support';
   import login_center_bg from '@/assets/images/login_center_bg.png'
 
@@ -75,29 +144,79 @@
     data() {
       const validateUsername = (rule, value, callback) => {
         if (!isvalidUsername(value)) {
-          callback(new Error('请输入正确的用户名'))
+          callback(new Error('请输入正确的用户名,长度在3-12之间'));
         } else {
-          callback()
+          callback();
         }
       };
       const validatePass = (rule, value, callback) => {
-        if (value.length < 3) {
-          callback(new Error('密码不能小于3位'))
-        } else {
+        if (value.length < 3||value.length>12) {
+          callback(new Error('请输入正确的密码，长度在3-12之间'))
+        } if (value!==this.registerForm.check){
+              callback(new Error('两次输入不相同'))
+          }else {
           callback()
         }
       };
+        const validateCheck = (rule, value, callback) => {
+            debugger
+            if (value==='') {
+                callback(new Error('请输入确认密码'))
+            } else if (value!==this.registerForm.password){
+                callback(new Error('两次输入不相同'))
+            }else {
+                callback();
+            }
+        };
+        const validateMail = (rule, value, callback) => {
+            if (!isValidateMail(value)) {
+                callback(new Error('请输入正确的邮箱，如：xxx@qq.com'))
+            } else {
+                callback();
+            }
+        };
+        const validateCode = (rule, value, callback) => {
+            if (value==='') {
+                callback(new Error('请输入验证码'))
+            } else if (value.length!==6){
+                callback(new Error('请输入长度为6的验证码'))
+            }else {
+                callback();
+            }
+        };
       return {
+          registerLoading:false,
+          type:"primary",
+          time:0,
+          timer:null,
+         buttonWord:"发送邮件",
+         disabled:false,
         loginForm: {
           username: '',
           password: '',
         },
+        registerForm:{
+           username: '123',
+           password: '123',
+           check:'123',
+           mail:'1462541756@qq.com',
+           verificationCode:'FLop7I'
+        },
+
         loginRules: {
           username: [{required: true, trigger: 'blur', validator: validateUsername}],
           password: [{required: true, trigger: 'blur', validator: validatePass}]
         },
+          registerRules: {
+              username: [{required: true, trigger: 'blur', validator: validateUsername}],
+              password: [{required: true, trigger: 'blur', validator: validatePass}],
+              check: [{required: true, trigger: 'blur', validator: validateCheck}],
+              mail: [{required: true, trigger: 'blur', validator: validateMail}],
+              verificationCode: [{required: true, trigger: 'blur', validator: validateCode}],
+          },
         loading: false,
         pwdType: 'password',
+        checkType:'password',
         login_center_bg,
         dialogVisible:false,
         supportDialogVisible:false
@@ -121,6 +240,35 @@
           this.pwdType = 'password'
         }
       },
+      showCheck() {
+            if (this.checkType === 'password') {
+                this.checkType = ''
+            } else {
+                this.checkType = 'password'
+            }
+      },
+      handleRegister(){
+           this.$refs.registerForm.validate(valid => {
+               if (valid) {
+                   this.registerLoading = true;
+                   handleRegister(this.registerForm).then((response)=>{
+                       let value=response.data;
+                       this.$message({
+                           message: "注册成功",
+                           duration: 1000
+                       });
+                       this.registerLoading = false;
+                       this.dialogVisible =false
+                   }).catch(()=>{
+                       this.registerLoading = false;
+                   })
+               } else {
+                   console.log('参数验证不合法！');
+                   return false
+               }
+           });
+        },
+
       handleLogin() {
         this.$refs.loginForm.validate(valid => {
           if (valid) {
@@ -144,17 +292,35 @@
           }
         })
       },
+      handleSentVerificationCode(){
+          this.disabled=true;
+          this.time=12;
+          this.timer=setInterval(()=>{
+              this.time--;
+              if (this.time<=0){
+                  this.disabled=false;
+                  this.buttonWord="再次发送";
+                  clearInterval(this.timer);
+              }else {
+                  this.buttonWord=this.time+"S后再次发送";
+              }
+          },1000);
+          this.$message({
+              message: '邮件已发送，请注意邮箱',
+              type: 'success',
+              duration: 1000
+          });
+          sentVerificationCode({mail:this.registerForm.mail}).then((response)=>{
+                this.$message({
+                    message: '邮件发送成功',
+                    type: 'success',
+                    duration: 1000
+                });
+            })
+        },
       handleTry(){
         this.dialogVisible =true
       },
-      dialogConfirm(){
-        this.dialogVisible =false;
-        setSupport(true);
-      },
-      dialogCancel(){
-        this.dialogVisible = false;
-        setSupport(false);
-      }
     }
   }
 </script>
@@ -180,5 +346,8 @@
     max-width: 100%;
     max-height: 100%;
     margin-top: 200px;
+  }
+  .register-form{
+    width: 100%
   }
 </style>

@@ -47,6 +47,14 @@ service.interceptors.response.use(
           })
         })
       }
+    if (res.code === 403){
+      console.log('message' + message)// for debug
+      Message({
+        message: "抱歉你没有访问权限",
+        type: 'error',
+        duration: 3 * 1000
+      })
+    }
       return Promise.reject('error')
     } else {
       return response.data

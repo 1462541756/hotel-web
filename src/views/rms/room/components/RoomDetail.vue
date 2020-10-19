@@ -122,7 +122,7 @@
                 if (this.isEdit){
                     updateRoom(this.value).then(response => {
                         this.$message({
-                            message: '提交成功',
+                            message: '修改成功',
                             type: 'success',
                             duration: 1000
                         });
@@ -131,7 +131,7 @@
                 }else {
                     addRoom(this.value).then(response => {
                         this.$message({
-                            message: '提交成功',
+                            message: '添加成功',
                             type: 'success',
                             duration: 1000
                         });

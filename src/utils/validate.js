@@ -3,6 +3,10 @@ export function isvalidUsername(str) {
   // return valid_map.indexOf(str.trim()) >= 0
   return str.trim().length>=3
 }
+export function isValidateMail(textval) {
+  const mailRegex =/^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+  return mailRegex.test(textval)
+}
 
 /* 合法uri*/
 export function validateURL(textval) {
