@@ -63,12 +63,39 @@ export const asyncRouterMap = [
     ]
   },
   {
+    path: '/oms',
+    component: Layout,
+    redirect: '/oms/order',
+    name: 'oms',
+    meta: {title: '订单', icon: 'order'},
+    children: [
+      {
+      path: 'order',
+      name: 'order',
+      component: () => import('@/views/oms/order/index'),
+      meta: {title: '订单列表', icon: 'order-list'}
+    },
+      {
+        path: 'detailOrder',
+        name: 'detailOrder',
+        component: () => import('@/views/oms/order/Detail'),
+        meta: {title: '订单详情', icon: 'order'}
+      },
+    ]
+  },
+  {
     path:'/ums',
     component: Layout,
     redirect: '/ums/admin',
     name: 'ums',
     meta: {title: '权限', icon: 'ums'},
     children: [
+      {
+        path: 'test',
+        name: 'test',
+        component: () => import('@/views/test'),
+        meta: {title: '测试', icon: 'order'}
+      },
       {
         path: 'admin',
         name: 'admin',
@@ -130,6 +157,7 @@ export const asyncRouterMap = [
       }
     ]
   },
+
   {path: '*', redirect: '/404', hidden: true}
 ]
 

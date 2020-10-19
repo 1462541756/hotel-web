@@ -152,12 +152,19 @@
       const validatePass = (rule, value, callback) => {
         if (value.length < 3||value.length>12) {
           callback(new Error('请输入正确的密码，长度在3-12之间'))
-        } if (value!==this.registerForm.check){
-              callback(new Error('两次输入不相同'))
-          }else {
+        } else {
           callback()
         }
       };
+        const validateRegisterPass = (rule, value, callback) => {
+            if (value.length < 3||value.length>12) {
+                callback(new Error('请输入正确的密码，长度在3-12之间'))
+            } if (value!==this.registerForm.check){
+                callback(new Error('两次输入不相同'))
+            }else {
+                callback()
+            }
+        };
         const validateCheck = (rule, value, callback) => {
             debugger
             if (value==='') {
@@ -196,11 +203,11 @@
           password: '',
         },
         registerForm:{
-           username: '123',
-           password: '123',
-           check:'123',
-           mail:'1462541756@qq.com',
-           verificationCode:'FLop7I'
+           username: '',
+           password: '',
+           check:'',
+           mail:'',
+           verificationCode:''
         },
 
         loginRules: {
@@ -209,7 +216,7 @@
         },
           registerRules: {
               username: [{required: true, trigger: 'blur', validator: validateUsername}],
-              password: [{required: true, trigger: 'blur', validator: validatePass}],
+              password: [{required: true, trigger: 'blur', validator: validateRegisterPass}],
               check: [{required: true, trigger: 'blur', validator: validateCheck}],
               mail: [{required: true, trigger: 'blur', validator: validateMail}],
               verificationCode: [{required: true, trigger: 'blur', validator: validateCode}],
@@ -235,9 +242,9 @@
     methods: {
       showPwd() {
         if (this.pwdType === 'password') {
-          this.pwdType = ''
+          this.pwdType = '';
         } else {
-          this.pwdType = 'password'
+          this.pwdType = 'password';
         }
       },
       showCheck() {
@@ -249,7 +256,6 @@
       },
       handleRegister(){
            this.$refs.registerForm.validate(valid => {
-
                if (valid) {
                    this.registerLoading = true;
                    handleRegister(this.registerForm).then((response)=>{
@@ -259,7 +265,9 @@
                            duration: 1000
                        });
                        this.registerLoading = false;
-                       this.dialogVisible =false
+                       this.dialogVisible =false;
+                       this.loginForm.username=this.registerForm.username;
+                       this.loginForm.password=this.registerForm.password;
                    }).catch(()=>{
                        this.registerLoading = false;
                    })
