@@ -273,11 +273,6 @@
       handleLogin() {
         this.$refs.loginForm.validate(valid => {
           if (valid) {
-            // let isSupport = getSupport();
-            // if(isSupport===undefined||isSupport==null){
-            //   this.dialogVisible =true;
-            //   return;
-            // }
             this.loading = true;
             this.$store.dispatch('Login', this.loginForm).then(() => {
               this.loading = false;
