@@ -249,6 +249,7 @@
       },
       handleRegister(){
            this.$refs.registerForm.validate(valid => {
+
                if (valid) {
                    this.registerLoading = true;
                    handleRegister(this.registerForm).then((response)=>{
