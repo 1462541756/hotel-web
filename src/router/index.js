@@ -78,8 +78,22 @@ export const asyncRouterMap = [
       {
         path: 'detailOrder',
         name: 'detailOrder',
-        component: () => import('@/views/oms/order/Detail'),
-        meta: {title: '订单详情', icon: 'order'}
+        component: () => import('@/views/oms/order/detail'),
+        meta: {title: '订单详情', icon: 'order'},
+        hidden: true
+      },
+      {
+        path: 'addOrder',
+        name: 'addOrder',
+        component: () => import('@/views/oms/order/add'),
+        meta: {title: '添加订单', icon: 'order-add'}
+      },
+      {
+        path: 'updateOrder',
+        name: 'updateOrder',
+        component: () => import('@/views/oms/order/update'),
+        meta: {title: '修改订单', icon: 'order-update'},
+        hidden: true
       },
     ]
   },

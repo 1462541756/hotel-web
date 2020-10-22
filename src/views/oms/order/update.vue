@@ -1,10 +1,10 @@
 <template> 
-  <order-detail ></order-detail>
+  <order-detail :operate='2'></order-detail>
 </template>
 <script>
   import OrderDetail from './components/OrderDetail'
   export default {
-    name: 'detailOrder',
+    name: 'updateOrder',
     components: { OrderDetail }
   }
 </script>

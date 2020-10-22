@@ -141,16 +141,18 @@
 
             },
             handleReset(){
-                getRoomById(this.$route.query.id).then(response=>{
-                    this.value=response.data;
-                    this.$message({
-                        message: '重置完成',
-                        type: 'success',
-                        duration: 1000
+                if(this.isEdit){
+                    getRoomById(this.$route.query.id).then(response=>{
+                        this.value=response.data;
+                        this.$message({
+                            message: '重置完成',
+                            type: 'success',
+                            duration: 1000
+                        });
                     });
-                });
-
-
+                }else {
+                    this.value=Object.assign({}, defaultRoomParam);
+                }
             },
         }
     }

@@ -21,45 +21,45 @@
       </div>
       <div style="margin-top: 15px">
         <el-form :inline="true" :model="listQuery" size="small" label-width="140px">
-          <el-form-item label="房间描述：">
-            <el-input style="width: 203px" v-model="listQuery.description" placeholder="房间描述"></el-input>
+          <el-form-item label="订单号：">
+            <el-input style="width: 203px" v-model="listQuery.orderSn" placeholder="订单号"></el-input>
           </el-form-item>
-          <el-form-item label="楼层号：">
-            <el-input style="width: 203px" v-model="listQuery.floor" placeholder="楼层号"></el-input>
+          <el-form-item label="订单用户名：">
+            <el-input style="width: 203px" v-model="listQuery.username" placeholder="订单用户名"></el-input>
           </el-form-item>
-          <el-form-item label="房间号：">
-            <el-input style="width: 203px" v-model="listQuery.serial" placeholder="房间号"></el-input>
-          </el-form-item>
-          <el-form-item label="房间状态：">
+          <el-form-item label="订单状态：">
             <el-select v-model="listQuery.status" placeholder="全部" clearable>
               <el-option
-                v-for="item in roomOptions"
+                v-for="item in statusOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="清洁状态：">
-            <el-select v-model="listQuery.clean" placeholder="全部" clearable>
+
+          <el-form-item label="支付类型：">
+            <el-select v-model="listQuery.payType" placeholder="全部" clearable>
               <el-option
-                v-for="item in cleanOptions"
+                v-for="item in payTypeOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="维修状态：">
-            <el-select v-model="listQuery.maintenance" placeholder="全部" clearable>
+
+          <el-form-item label="订单类型：">
+            <el-select v-model="listQuery.orderType" placeholder="全部" clearable>
               <el-option
-                v-for="item in maintenanceOptions"
+                v-for="item in orderTypeOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
               </el-option>
             </el-select>
           </el-form-item>
+
         </el-form>
       </div>
     </el-card>
@@ -68,7 +68,7 @@
       <span>数据列表</span>
       <el-button
         class="btn-add"
-        @click="handleAddRoom()"
+        @click="handleAddOrder()"
         size="mini">
         添加
       </el-button>
@@ -77,92 +77,62 @@
       <el-table ref="productTable"
                 :data="list"
                 style="width: 100%"
-                @selection-change="handleSelectionChange"
                 v-loading="listLoading"
                 border>
-        <el-table-column type="selection" width="60" align="center"></el-table-column>
-        <el-table-column label="编号" width="100" align="center"><template slot-scope="scope">{{scope.row.id}}</template></el-table-column>
-        <el-table-column label="房间图片" width="160" align="center">
-          <template slot-scope="scope">
-            <img style="height: 80px" :src="getFirstPic(scope.row.pic)">
+        <el-table-column label="ID" width="50" align="center"><template slot-scope="scope">{{scope.row.id}}</template></el-table-column>
+        <el-table-column label="订单编号" width="140" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.orderSn}}</template>
+        </el-table-column>
+        <el-table-column label="订单用户名" width="140" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="scope">{{scope.row.username}}</template>
+        </el-table-column>
+        <el-table-column label="应付金额"  width="100" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.payAmount}}</template>
+        </el-table-column>
+        <el-table-column label="支付方式" width="100" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.payType | formatPayType}}</template>
+        </el-table-column>
+        <el-table-column label="订单状态" width="100" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.status | formatStatus}}</template>
+        </el-table-column>
+        <el-table-column label="来源类型" width="100" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.sourceType | formatSourceType}}</template>
+        </el-table-column>
+        <el-table-column label="订单类型" width="100" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.orderType |formatOrderType}}</template>
+        </el-table-column>
+        <el-table-column label="备注"  align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.note}}</template>
+        </el-table-column>
+        <el-table-column label="支付时间" width="140" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.paymentTime| formatDateTime}}</template>
+        </el-table-column>
+        <el-table-column label="评价时间" width="140" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.commentTime| formatDateTime}}</template>
+        </el-table-column>
+        <el-table-column label="创建时间" width="140" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.createTime| formatDateTime}}</template>
+        </el-table-column>
+        <el-table-column label="修改时间" width="140" align="center" :show-overflow-tooltip="true">
+          <template slot-scope="scope">{{scope.row.modifyTime| formatDateTime}}
           </template>
         </el-table-column>
-        <el-table-column label="楼层号" width="140" align="center" :show-overflow-tooltip="true">
-          <template slot-scope="scope">{{scope.row.floor}}</template>
-        </el-table-column>
-        <el-table-column label="房间号" width="140" align="center" :show-overflow-tooltip="true">
-          <template slot-scope="scope">{{scope.row.serial}}</template>
-        </el-table-column>
-        <el-table-column label="清洁状态" width="140" align="center" :show-overflow-tooltip="true">
-          <template slot-scope="scope">{{getCleanLabel(scope.row.clean)}}</template>
-        </el-table-column>
-        <el-table-column label="维修" width="140" align="center" :show-overflow-tooltip="true">
-          <template slot-scope="scope">{{getMaintenanceLabel(scope.row.maintenance)}}</template>
-        </el-table-column>
-        <el-table-column label="描述"  align="center" :show-overflow-tooltip="true">
-          <template slot-scope="scope">{{scope.row.description}}</template>
-        </el-table-column>
-        <el-table-column label="排序" width="140" align="center">
-          <template slot-scope="scope">{{scope.row.sort}}</template>
-        </el-table-column>
-        <el-table-column label="启用状态" width="140" align="center">
-          <template slot-scope="scope">
-            <p>
-              <el-switch
-                @change="handlePublishStatusChange(scope.$index, scope.row)"
-                :active-value="1"
-                :inactive-value="0"
-                v-model="scope.row.status">
-              </el-switch>
-            </p>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="160" align="center">
+        <el-table-column label="操作" width="200" align="center">
           <template slot-scope="scope">
             <p>
               <el-button
                 size="mini"
-                @click="handleEditRoom(scope.$index, scope.row)">编辑
+                @click="handleDetail(scope.$index, scope.row)">查看订单
               </el-button>
               <el-button
                 size="mini"
                 type="danger"
-                @click="handleDeleteRoom(scope.$index, scope.row)">删除
-              </el-button>
-            </p>
-            <p>
-              <el-button
-                size="mini"
-                @click="handleCleanRoom(scope.$index, scope.row)">清洁
-              </el-button>
-              <el-button
-                size="mini"
-                @click="handleMaintainRoom(scope.$index, scope.row)">维修
+                @click="handleCancel(scope.$index, scope.row)">取消订单
               </el-button>
             </p>
           </template>
         </el-table-column>
       </el-table>
-    </div>
-    <div class="batch-operate-container">
-      <el-select
-        size="small"
-        v-model="operateType" placeholder="批量操作">
-        <el-option
-          v-for="item in operates"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button
-        style="margin-left: 20px"
-        class="search-button"
-        @click="handleBatchOperate()"
-        type="primary"
-        size="small">
-        确定
-      </el-button>
     </div>
     <div class="pagination-container">
       <el-pagination
@@ -171,7 +141,7 @@
         @current-change="handleCurrentChange"
         layout="total, sizes,prev, pager, next,jumper"
         :page-size="listQuery.pageSize"
-        :page-sizes="[5,10,15]"
+        :page-sizes="[5,10,15,20]"
         :current-page.sync="listQuery.pageNum"
         :total="total">
       </el-pagination>
@@ -182,85 +152,111 @@
 
   import {
     fetchList,
-    deleteRoomById,
-    updateRoom,
-  } from '@/api/room'
+      cancel,
+  } from '@/api/order';
+  import {
+      formatDate as formatDate1
+  }from '@/utils/date';
   const defaultListQuery = {
-      description: null,
       pageNum: 1,
       pageSize: 5,
-      floor:null,
-      serial:null,
-      clean:null,
+      orderSn: null,
+      username: null,
+      roomName: null,
       status:null,
-      maintenance:null,
-      pic:null,
+      payType:null,
+      orderType:null,
   };
   export default {
     name: "orderList",
     data() {
       return {
         //下拉列表参数
-        roomOptions: [{
-            value: 1,
-            label: '空闲'
-        }, {
+        payTypeOptions: [{
             value: 0,
-            label: '不可用'
-        }],
-        cleanOptions:[{
-            value: 0,
-            label: '未清洁'
+            label: '未支付'
         }, {
             value: 1,
-            label: '清洁中'
+            label: '支付宝'
         }, {
             value: 2,
-            label: '已清洁'
+            label: '微信'
+        }, {
+            value: 3,
+            label: '现金'
         }],
-        maintenanceOptions:[{
+        statusOptions:[{
             value: 0,
-            label: '未维修'
+            label: '未付款'
         }, {
             value: 1,
-            label: '维修中'
-        }, {
-            value: 2,
-            label: '维修完成'
+            label: '已付款'
         }],
+        orderTypeOptions:[{
+              value: 0,
+              label: '正常订单'
+          }, {
+              value: 1,
+              label: '秒杀订单'
+          }],
         //列表数据相关
         listQuery: Object.assign({}, defaultListQuery),
         list: null,
         total: null,
         //加载状态
         listLoading: true,
-        //批量操作类型
-        operateType: null,
-        //多选项
-        multipleSelection:[],
-        //批量操作类型
-          operates:[
-            {
-                label: "启用房间",
-                value: "enable"
-            },
-            {
-                label: "停用房间",
-                value: "not-enable"
-            },
-        ],
       }
     },
     created() {
       this.getList();
     },
     watch: {
-
     },
-    filters: {
-    },
+      filters: {
+          formatDateTime(time) {
+              let date = new Date(time);
+              return formatDate1(date, 'yyyy-MM-dd hh:mm:ss')
+          },
+          formatPayType(value) {
+              if (value === 1) {
+                  return '支付宝';
+              } else if (value === 2) {
+                  return '微信';
+              } else if (value === 3) {
+                  return '现金';
+              }else {
+                  return '未支付';
+              }
+          },
+          formatSourceType(value) {
+              if (value === 0) {
+                  return 'PC';
+              } else if (value === 1) {
+                  return 'APP';
+              } else {
+                  return '线下';
+              }
+          },
+          formatOrderType(value) {
+              if (value === 1) {
+                  return '秒杀订单';
+              } else {
+                  return '正常订单';
+              }
+          },
+          formatStatus(value){
+              if (value === 1) {
+                  return '已付款';
+              } else {
+                  return '未付款';
+              }
+          }
+      },
 
     methods: {
+        handleAddOrder(){
+            this.$router.push({path:'/oms/addOrder'})
+        },
         handleSearchList() {
             this.listQuery.pageNum = 1;
             this.getList();
@@ -273,132 +269,19 @@
                 this.total = response.data.total;
             });
         },
-
-        getCleanLabel(clean){
-            switch (clean) {
-                case 0:return '未清洁';
-                case 1:return '清洁中';
-                case 2:return '已清洁';
-                default:    return '#';
-            }
+        handleDetail(index,row){
+            this.$router.push({path:"/oms/detail/",query:{id:row.id}})
         },
-        getMaintenanceLabel(maintenance){
-            switch (maintenance) {
-                case 0:return '未维修';
-                case 1:return '维修中';
-                case 2:return '维修完成';
-                default: return '#';
-            }
-        },
-        getFirstPic(pics){
-            if (pics == null ||pics == null || pics.length === 0) {
-                return  null;
-            } else {
-                let pic="";
-                let pics2 = pics.split(',');
-                if (pics2.length>0) pic =pics2[0];
-                return pic;
-            }
-        },
-        //添加房间
-        handleAddRoom(){
-          this.$router.push({path:'/rms/addRoom'});
-        },
-        handleEditRoom(index,row){
-           this.$router.push({path:'/rms/updateRoom',query:{id:row.id}});
-        },
-        handleDeleteRoom(index,row){
+        handleCancel(index,row){
             this.listLoading = true;
-            deleteRoomById(row.id).then(response => {
+            cancel(row.id).then(response => {
                 this.listLoading = false;
                 fetchList();
-            });
-        },
-
-        handleCleanRoom(){
-
-        },
-        handleMaintainRoom(){
-
-        },
-        //修改房间空闲状态
-        handlePublishStatusChange(index, row){
-            let params={
-                "id":row.id,
-                "status":row.status,
-            };
-            updateRoom(params).then(response => {
-                this.$message({
-                    message: '房间状态已修改成功',
-                    type: 'success',
-                    duration: 1000
-                });
             });
         },
         //重置搜索条件
         handleResetSearch() {
             this.listQuery = Object.assign({}, defaultListQuery);
-        },
-        //选项改变触发方法
-        handleSelectionChange(){
-
-        },
-        //批量操作
-        handleBatchOperate(){
-            /*if(this.operateType==null){
-                this.$message({
-                    message: '请选择操作类型',
-                    type: 'warning',
-                    duration: 1000
-                });
-                return;
-            }
-            if(this.multipleSelection==null||this.multipleSelection.length<1){
-                this.$message({
-                    message: '请选择要操作的商品',
-                    type: 'warning',
-                    duration: 1000
-                });
-                return;
-            }
-            this.$confirm('是否要进行该批量操作?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                let ids=[];
-                for(let i=0;i<this.multipleSelection.length;i++){
-                    ids.push(this.multipleSelection[i].id);
-                }
-                switch (this.operateType) {
-                    case this.operates[0].value:
-                        this.updatePublishStatus(1,ids);
-                        break;
-                    case this.operates[1].value:
-                        this.updatePublishStatus(0,ids);
-                        break;
-                    case this.operates[2].value:
-                        this.updateRecommendStatus(1,ids);
-                        break;
-                    case this.operates[3].value:
-                        this.updateRecommendStatus(0,ids);
-                        break;
-                    case this.operates[4].value:
-                        this.updateNewStatus(1,ids);
-                        break;
-                    case this.operates[5].value:
-                        this.updateNewStatus(0,ids);
-                        break;
-                    case this.operates[6].value:
-                        break;
-                    case this.operates[7].value:
-                        this.updateDeleteStatus(1,ids);
-                        break;
-                    default:
-                        break;
-                }
-                this.getList();
-            });*/
         },
         //改变页长
         handleSizeChange(val) {
@@ -410,10 +293,6 @@
         handleCurrentChange(val) {
             this.listQuery.pageNum = val;
             this.getList();
-        },
-        //多选项改变
-        handleSelectionChange(val) {
-            this.multipleSelection = val;
         },
       },
   }
