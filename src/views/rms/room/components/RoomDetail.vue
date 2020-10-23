@@ -26,7 +26,7 @@
         <el-input  v-model="value.sort"></el-input>
       </el-form-item>
       <el-form-item label="图片：" prop="pic">
-        <multi-upload v-model="selectProductPics"></multi-upload>
+        <multi-upload v-model="selectRoomPics"></multi-upload>
       </el-form-item>
       <el-form-item label="描述：" prop="description">
         <el-input
@@ -88,7 +88,7 @@
         },
         computed:{
             //房间的图片
-            selectProductPics:{
+            selectRoomPics:{
                 get:function () {
                     let pics=[];
                     if(this.value.pic===undefined||this.value.pic==null||this.value.pic===''){

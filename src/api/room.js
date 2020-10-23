@@ -38,6 +38,14 @@ export function deleteRoomById(id) {
   });
 }
 
+export function updateRoomsStatus(data) {
+  return request({
+    url: '/room/updateRoomsStatus',
+    method: 'post',
+    data:data
+  });
+}
+
 
 
 

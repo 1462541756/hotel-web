@@ -10,21 +10,20 @@ export function fetchList(params) {
 
 export function cancel(orderId) {
   return request({
-    url: '/cancel/vip/'+orderId,
+    url: '/order/cancel/vip/'+orderId,
     method: 'get',
   })
 }
 
 export function getOrderById(params) {
   return request({
-    url: '/getOrderById',
+    url: '/order/getOrderById/'+params,
     method: 'get',
-    params: params
   })
 }
 export function updateOrder(data) {
   return request({
-    url: '/update',
+    url: '/order/update',
     method: 'post',
     data: data
   })
@@ -32,7 +31,15 @@ export function updateOrder(data) {
 
 export function addOrder(data) {
   return request({
-    url: '/create',
+    url: '/order/create',
+    method: 'post',
+    data: data
+  })
+}
+
+export function commitOrder(data) {
+  return request({
+    url: '/order/commit',
     method: 'post',
     data: data
   })

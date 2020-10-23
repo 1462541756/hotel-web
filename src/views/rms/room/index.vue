@@ -185,6 +185,7 @@
     fetchList,
     deleteRoomById,
     updateRoom,
+      updateRoomsStatus,
   } from '@/api/room'
   const defaultListQuery = {
       description: null,
@@ -311,8 +312,13 @@
         handleDeleteRoom(index,row){
             this.listLoading = true;
             deleteRoomById(row.id).then(response => {
+                this.$message({
+                    message: '房间删除成功',
+                    type: 'success',
+                    duration: 1000
+                });
+                this.getList();
                 this.listLoading = false;
-                fetchList();
             });
         },
 
@@ -340,13 +346,29 @@
         handleResetSearch() {
             this.listQuery = Object.assign({}, defaultListQuery);
         },
-        //选项改变触发方法
-        handleSelectionChange(){
-
+        updateStatus(status,ids){
+            let params={
+                "ids":ids,
+                "status":status,
+            };
+            updateRoomsStatus(params).then(()=>{
+                this.$message({
+                    message: '房间状态修改成功',
+                    type: 'success',
+                    duration: 1000
+                });
+                this.getList();
+            }).catch(()=>{
+                this.$message({
+                    message: '房间状态修改失败',
+                    type: 'error',
+                    duration: 1000
+                });
+            })
         },
         //批量操作
         handleBatchOperate(){
-            /*if(this.operateType==null){
+            if(this.operateType==null){
                 this.$message({
                     message: '请选择操作类型',
                     type: 'warning',
@@ -356,7 +378,7 @@
             }
             if(this.multipleSelection==null||this.multipleSelection.length<1){
                 this.$message({
-                    message: '请选择要操作的商品',
+                    message: '请选择要操作的房间',
                     type: 'warning',
                     duration: 1000
                 });
@@ -373,33 +395,15 @@
                 }
                 switch (this.operateType) {
                     case this.operates[0].value:
-                        this.updatePublishStatus(1,ids);
+                        this.updateStatus(1,ids);
                         break;
                     case this.operates[1].value:
-                        this.updatePublishStatus(0,ids);
-                        break;
-                    case this.operates[2].value:
-                        this.updateRecommendStatus(1,ids);
-                        break;
-                    case this.operates[3].value:
-                        this.updateRecommendStatus(0,ids);
-                        break;
-                    case this.operates[4].value:
-                        this.updateNewStatus(1,ids);
-                        break;
-                    case this.operates[5].value:
-                        this.updateNewStatus(0,ids);
-                        break;
-                    case this.operates[6].value:
-                        break;
-                    case this.operates[7].value:
-                        this.updateDeleteStatus(1,ids);
+                        this.updateStatus(0,ids);
                         break;
                     default:
                         break;
                 }
-                this.getList();
-            });*/
+            });
         },
         //改变页长
         handleSizeChange(val) {

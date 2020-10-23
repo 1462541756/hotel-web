@@ -1,55 +1,57 @@
 <template> 
   <el-card class="form-container" shadow="never">
-    <el-form :model="value" :rules="rules" ref="orderInfoForm" label-width="120px" style="width: 600px" size="small">
-      <el-form-item label="订单编号：" prop="orderSn" >
-        <el-input v-model="value.orderSn" clearable></el-input>
+    <el-form  :model="value" :rules="rules" ref="orderInfoForm" label-width="120px" style="width: 600px" size="small">
+      <el-form-item label="订单编号："   >
+        {{value.orderSn}}
       </el-form-item>
-      <el-form-item label="订单用户名：" prop="username" >
-        <el-input v-model="value.username" clearable></el-input>
+      <el-form-item label="订单用户名："  >
+        {{value.username}}
       </el-form-item>
-      <el-form-item label="应付金额：" prop="payAmount" >
-        <el-input v-model="value.payAmount" clearable></el-input>
+      <el-form-item label="应付金额(元)："  >
+        {{value.payAmount}}
       </el-form-item>
-      <el-form-item label="支付方式：" prop="payType" >
-        <el-input v-model="value.payType" clearable></el-input>
+      <el-form-item label="支付方式："  >
+        {{value.payType | formatPayType}}
       </el-form-item>
-      <el-form-item label="订单状态：" prop="status" >
-        <el-input v-model="value.status" clearable></el-input>
+      <el-form-item label="订单状态："  >
+        {{value.status | formatStatus}}
       </el-form-item>
-      <el-form-item label="来源类型：" prop="sourceType" >
-        <el-input v-model="value.sourceType" clearable></el-input>
+      <el-form-item label="来源类型："  >
+        {{value.sourceType | formatSourceType}}
       </el-form-item>
-      <el-form-item label="订单类型：" prop="orderType" >
-        <el-input v-model="value.orderType" clearable></el-input>
+      <el-form-item label="订单类型：" >
+        {{value.orderType | formatOrderType}}
       </el-form-item>
       <el-form-item label="支付时间：" prop="payTime" >
-        <el-input v-model="value.payTime" clearable></el-input>
+        {{value.payTime}}
       </el-form-item>
       <el-form-item label="评价时间：" prop="commentTime" >
-        <el-input v-model="value.commentTime" clearable></el-input>
+        {{value.commentTime}}
       </el-form-item>
       <el-form-item label="创建时间：" prop="createTime" >
-        <el-input v-model="value.createTime" clearable></el-input>
+        {{value.createTime}}
       </el-form-item>
       <el-form-item label="修改时间：" prop="modifyTime" >
-        <el-input v-model="value.modifyTime" clearable></el-input>
+        {{value.modifyTime}}
       </el-form-item>
-
       <el-form-item label="房间名字：" prop="roomName" >
-        <el-input v-model="value.roomName" clearable></el-input>
+        {{value.roomName}}
       </el-form-item>
-      <el-form-item label="楼层号：" prop="floor" >
-        <el-input v-model="value.floor" clearable></el-input>
+      <el-form-item label="楼层号：" prop="floor">
+        {{value.floor}}
       </el-form-item>
       <el-form-item label="房间号：" prop="serial" >
-        <el-input v-model="value.serial" clearable></el-input>
+        {{value.serial}}
       </el-form-item>
+
       <el-form-item label="图片：" prop="pic">
-        <multi-upload v-model="selectProductPics"></multi-upload>
+        <img style="height: 80px;overflow: hidden"  v-for="img in pics" :src="img" alt="图片">
       </el-form-item>
+
 
       <el-form-item label="备注：" prop="note">
         <el-input
+          :disabled="true"
           :rows="4"
           :autoSize="true"
           v-model="value.note"
@@ -60,15 +62,28 @@
         <el-button type="primary" size="medium" @click="handleBack">返回</el-button>
       </el-form-item>
     </el-form>
+
+    <el-dialog
+      title="提交密码"
+      :visible.sync="commit"
+      width="30%">
+      <el-input v-model="commitPassword" placeholder="请输入提交密码"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="commit = false" size="small">取 消</el-button>
+        <el-button type="primary" @click="handleCommitConfirm()" size="small">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
     import {
         getOrderById,
-        updateOrder,
-        addOrder,
-    } from '@/api/order'
+        commitOrder,
+    } from '@/api/order';
+    import {
+        formatDate as formatDate1
+    }from '@/utils/date';
     import MultiUpload from '@/components/Upload/multiUpload';
     const defaultOrderParam = {
         pageNum: 1,
@@ -94,81 +109,100 @@
         components:{MultiUpload},
         data() {
             return {
+                pics:[],
                 value: Object.assign({}, defaultOrderParam),
                 resetValue: Object.assign({}, defaultOrderParam),
                 rules: {
-                }
+                },
+                commit:false,
+                commitPassword:'',
+                orderId:null,
             }
         },
         created() {
-           switch (this.operate) {
-               case 1:{
-                   break;
-               }
-               case 2:{
-                   break;
-               }
-               default:{
-                   getOrderById(this.$route.query.id).then(response=>{
-                       this.value=response.data;
-                   });
-               }
-           }
+            getOrderById(this.$route.query.id).then(response=>{
+                this.value=response.data;
+                this.pics=this.value.pic.split(",");
+            }).catch(e=>{
+                console.log(e)
+            });
         },
         computed:{
-            selectProductPics:{
-                get:function () {
-                    let pics=[];
-                    if(this.value.pic===undefined||this.value.pic==null||this.value.pic===''){
-                        return pics;
-                    }
-                    let pic = this.value.pic.split(',');
-                    for(let i=0;i<pic.length;i++){
-                        pics.push(pic[i]);
-                    }
-                    return pics;
-                },
-                set:function (newValue) {
-                    if (newValue == null || newValue.length === 0) {
-                        this.value.pic = null;
-                    } else {
-                        this.value.pic = '';
-                        if (newValue.length > 0) {
-                            for (let i = 0; i < newValue.length; i++) {
-                                this.value.pic += newValue[i];
-                                if (i !== newValue.length - 1) {
-                                    this.value.pic += ',';
-                                }
-                            }
-                        }
-                    }
+        },
+        filters: {
+            formatDateTime(time) {
+                let date = new Date(time);
+                return formatDate1(date, 'yyyy-MM-dd hh:mm:ss')
+            },
+            formatPayType(value) {
+                if (value === 1) {
+                    return '支付宝';
+                } else if (value === 2) {
+                    return '微信';
+                } else if (value === 3) {
+                    return '现金';
+                }else {
+                    return '未支付';
+                }
+            },
+            formatSourceType(value) {
+                if (value === 0) {
+                    return 'PC';
+                } else if (value === 1) {
+                    return 'APP';
+                } else {
+                    return '线下';
+                }
+            },
+            formatOrderType(value) {
+                if (value === 1) {
+                    return '秒杀订单';
+                } else {
+                    return '正常订单';
+                }
+            },
+            formatStatus(value){
+                if (value === 1) {
+                    return '已付款';
+                } else if (value===2){
+                    return '已取消'
+                }else {
+                    return '未付款';
                 }
             }
         },
         methods:{
-            handleCommit(){
-                if (this.operate===2){
-                    updateOrder(this.value).then(response => {
-                        this.$message({
-                            message: '修改成功',
-                            type: 'success',
-                            duration: 1000
-                        });
-                        this.$router.push({path:'/oms/order'});
-                    });
-                }else if (this.operate===1){
-                    addOrder(this.value).then(response => {
-                        this.$message({
-                            message: '添加成功',
-                            type: 'success',
-                            duration: 1000
-                        });
-                        this.$router.push({path:'/oms/order'});
+            handleCommit(index, row){
+                if (this.operate===0){
+                    this.commit=true;
+                }else {
+                    this.$message({
+                        message: '该订单无法提交',
+                        type: 'error',
+                        duration: 1000
                     });
                 }
 
             },
-            handleReset(){
+            handleCommitConfirm(){
+                this.$confirm('是否要确认?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let params = new URLSearchParams();
+                    params.append("commitPassword", this.commitPassword);
+                    params.append("orderId", this.orderId);
+                    commitOrder(params).then(response => {
+                        this.$message({
+                            message: '订单提交成功！',
+                            type: 'success'
+                        });
+                        this.commit = false;
+                    })
+                })
+            },
+            handleReset(index, row){
                 if(this.operate===2){
                     getOrderById(this.$route.query.id).then(response=>{
                         this.value=response.data;
@@ -182,11 +216,13 @@
                     this.value=Object.assign({}, defaultRoomParam);
                 }
             },
+            handleBack(){
+                this.$router.push({path:'/oms/order'})
+            },
 
         }
     }
 </script>
 
 <style scoped>
-
 </style>

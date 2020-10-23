@@ -1,5 +1,5 @@
 <template> 
-  <order-detail :operate='0'></order-detail>
+  <order-detail ></order-detail>
 </template>
 <script>
   import OrderDetail from './components/OrderDetail'

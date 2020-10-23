@@ -63,16 +63,7 @@
         </el-form>
       </div>
     </el-card>
-    <el-card class="operate-container" shadow="never">
-      <i class="el-icon-tickets"></i>
-      <span>数据列表</span>
-      <el-button
-        class="btn-add"
-        @click="handleAddOrder()"
-        size="mini">
-        添加
-      </el-button>
-    </el-card>
+
     <div class="table-container">
       <el-table ref="productTable"
                 :data="list"
@@ -86,7 +77,7 @@
         <el-table-column label="订单用户名" width="140" align="center" :show-overflow-tooltip="true">
         <template slot-scope="scope">{{scope.row.username}}</template>
         </el-table-column>
-        <el-table-column label="应付金额"  width="100" align="center" :show-overflow-tooltip="true">
+        <el-table-column label="应付金额(元)"  width="100" align="center" :show-overflow-tooltip="true">
           <template slot-scope="scope">{{scope.row.payAmount}}</template>
         </el-table-column>
         <el-table-column label="支付方式" width="100" align="center" :show-overflow-tooltip="true">
@@ -124,10 +115,14 @@
                 size="mini"
                 @click="handleDetail(scope.$index, scope.row)">查看订单
               </el-button>
-              <el-button
+              <el-button v-if="scope.row.status===0"
                 size="mini"
                 type="danger"
                 @click="handleCancel(scope.$index, scope.row)">取消订单
+              </el-button>
+              <el-button v-if="scope.row.status===0"
+                         size="mini"
+                         @click="handleCommit(scope.$index, scope.row)">线下支付
               </el-button>
             </p>
           </template>
@@ -247,16 +242,15 @@
           formatStatus(value){
               if (value === 1) {
                   return '已付款';
-              } else {
+              } else if (value===2){
+                  return '已取消'
+              }else {
                   return '未付款';
               }
           }
       },
 
     methods: {
-        handleAddOrder(){
-            this.$router.push({path:'/oms/addOrder'})
-        },
         handleSearchList() {
             this.listQuery.pageNum = 1;
             this.getList();
@@ -270,13 +264,31 @@
             });
         },
         handleDetail(index,row){
-            this.$router.push({path:"/oms/detail/",query:{id:row.id}})
+            this.$router.push({path:"/oms/detailOrder",query:{id:row.id}})
         },
         handleCancel(index,row){
-            this.listLoading = true;
-            cancel(row.id).then(response => {
-                this.listLoading = false;
-                fetchList();
+            this.$confirm('是否要确认?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.listLoading = true;
+                cancel(row.id).then(response => {
+                    this.$message({
+                        message: '订单取消成功',
+                        type: 'success',
+                        duration: 1000
+                    });
+                    this.getList();
+                    this.listLoading = false;
+                }).catch(e=>{
+                    this.$message({
+                        message: '订单取消失败',
+                        type: 'error',
+                        duration: 1000
+                    });
+                    this.listLoading = false;
+                });
             });
         },
         //重置搜索条件
