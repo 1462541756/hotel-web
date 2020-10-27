@@ -107,7 +107,7 @@
         <el-table-column label="排序" width="140" align="center">
           <template slot-scope="scope">{{scope.row.sort}}</template>
         </el-table-column>
-        <el-table-column label="启用状态" width="140" align="center">
+        <el-table-column label="空闲状态(不可用/空闲)" width="180" align="center">
           <template slot-scope="scope">
             <p>
               <el-switch
@@ -132,7 +132,7 @@
                 @click="handleDeleteRoom(scope.$index, scope.row)">删除
               </el-button>
             </p>
-            <p>
+<!--            <p>
               <el-button
                 size="mini"
                 @click="handleCleanRoom(scope.$index, scope.row)">清洁
@@ -141,7 +141,7 @@
                 size="mini"
                 @click="handleMaintainRoom(scope.$index, scope.row)">维修
               </el-button>
-            </p>
+            </p>-->
           </template>
         </el-table-column>
       </el-table>
@@ -243,11 +243,11 @@
         //批量操作类型
           operates:[
             {
-                label: "启用房间",
+                label: "切换房间状态为空闲",
                 value: "enable"
             },
             {
-                label: "停用房间",
+                label: "切换房间状态为不可用",
                 value: "not-enable"
             },
         ],
@@ -274,6 +274,9 @@
                 this.list = response.data.list;
                 this.total = response.data.total;
             });
+        },
+        handleResetSearch() {
+            this.listQuery = Object.assign({}, defaultListQuery);
         },
 
         getCleanLabel(clean){
@@ -395,10 +398,10 @@
                 }
                 switch (this.operateType) {
                     case this.operates[0].value:
-                        this.updateStatus(1,ids);
+                        this.updateStatus(0,ids);
                         break;
                     case this.operates[1].value:
-                        this.updateStatus(0,ids);
+                        this.updateStatus(1,ids);
                         break;
                     default:
                         break;

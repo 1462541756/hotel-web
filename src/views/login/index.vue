@@ -133,6 +133,7 @@
 </template>
 
 <script>
+    import {getLoginInfo} from '@/api/admin';
   import {sentVerificationCode} from '@/api/mail';
   import {register as handleRegister} from '@/api/register';
   import {isvalidUsername,isValidateMail} from '@/utils/validate';
@@ -286,7 +287,14 @@
               this.loading = false;
               setCookie("username",this.loginForm.username,15);
               setCookie("password",this.loginForm.password,15);
-              this.$router.push({path: '/'})
+                getLoginInfo().then((response)=>{
+                    let roles=response.data.roles;
+                    if (roles.length===1&&roles[0].id===9){
+                        this.$router.push({path: '/front/index'})
+                    }else {
+                        this.$router.push({path: '/'});
+                    }
+                })
             }).catch(() => {
               this.loading = false
             })

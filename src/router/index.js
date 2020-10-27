@@ -166,8 +166,14 @@ export const asyncRouterMap = [
     meta: {title: '权限', icon: 'ums'},
     children: [
       {
-        path: 'checkIn',
-        name: 'checkIn',
+        path: 'check',
+        name: 'check',
+        component: () => import('@/views/cms/check'),
+        meta: {title: '入住管理', icon: 'ums-admin'}
+      },
+      {
+        path: 'checkList',
+        name: 'checkList',
         component: () => import('@/views/cms/index'),
         meta: {title: '入住管理', icon: 'ums-admin'}
       },

@@ -1,11 +1,14 @@
 <template> 
   <el-card class="form-container" shadow="never">
-    <el-form  :model="value" :rules="rules" ref="orderInfoForm" label-width="120px" style="width: 600px" size="small">
+    <el-form   :model="value" :rules="rules" ref="orderInfoForm" label-width="120px" style="width: 600px;" size="small">
       <el-form-item label="订单编号："   >
         {{value.orderSn}}
       </el-form-item>
       <el-form-item label="订单用户名："  >
         {{value.username}}
+      </el-form-item>
+      <el-form-item label="身份证号："  >
+        {{value.cardId}}
       </el-form-item>
       <el-form-item label="应付金额(元)："  >
         {{value.payAmount}}
@@ -23,16 +26,16 @@
         {{value.orderType | formatOrderType}}
       </el-form-item>
       <el-form-item label="支付时间：" prop="payTime" >
-        {{value.payTime}}
+        {{value.paymentTime | formatDateTime}}
       </el-form-item>
       <el-form-item label="评价时间：" prop="commentTime" >
-        {{value.commentTime}}
+        {{value.commentTime  | formatDateTime}}
       </el-form-item>
       <el-form-item label="创建时间：" prop="createTime" >
-        {{value.createTime}}
+        {{value.createTime  | formatDateTime}}
       </el-form-item>
       <el-form-item label="修改时间：" prop="modifyTime" >
-        {{value.modifyTime}}
+        {{value.modifyTime   | formatDateTime}}
       </el-form-item>
       <el-form-item label="房间名字：" prop="roomName" >
         {{value.roomName}}
@@ -97,6 +100,7 @@
         floor:null,
         serial:null,
         pic:null,
+        cardId:null
     };
     export default {
         name: "orderDetail",

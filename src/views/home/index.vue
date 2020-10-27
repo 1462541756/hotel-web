@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <!--<div class="app-container">
     <div class="total-layout">
       <el-row :gutter="20">
         <el-col :span="6">
@@ -160,6 +160,9 @@
         </el-col>
       </el-row>
     </div>
+  </div>-->
+  <div class="app-container">
+    欢迎使用本系统！
   </div>
 </template>
 

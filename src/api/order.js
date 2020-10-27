@@ -44,3 +44,11 @@ export function commitOrder(data) {
     data: data
   })
 }
+
+export function commit(data) {
+  return request({
+    url: '/order/commit',
+    method: 'post',
+    params: data
+  })
+}

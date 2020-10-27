@@ -4,23 +4,50 @@
       <el-form-item label="房间名：" prop="name" >
         <el-input v-model="value.name" clearable></el-input>
       </el-form-item>
-      <el-form-item label="楼层：" prop="floor">
-        <el-input v-model="value.floor" clearable></el-input>
+      <el-form-item label="楼层号：" prop="floor">
+        <el-input type="number" v-model="value.floor" clearable></el-input>
       </el-form-item>
       <el-form-item label="房间号：" prop="serial">
         <el-input v-model="value.serial" clearable></el-input>
       </el-form-item>
-      <el-form-item label="价格：" prop="price">
-        <el-input v-model="value.price"></el-input>
+      <el-form-item label="价格(元)：" prop="price">
+        <el-input type="number"  v-model="value.price"></el-input>
       </el-form-item>
       <el-form-item  label="空闲状态：" prop="status">
-        <el-input  v-model="value.status" ></el-input>
+<!--        <el-input  v-model="value.status" ></el-input>-->
+        <el-select style="width: 100%;"  v-model="value.status" placeholder="请选择">
+          <el-option
+            v-for="item in roomOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            :disabled="item.disabled">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="清洁状态：" prop="clean">
-        <el-input v-model="value.clean"></el-input>
+<!--        <el-input v-model="value.clean"></el-input>-->
+        <el-select style="width: 100%;"  v-model="value.clean" placeholder="请选择">
+          <el-option
+            v-for="item in cleanOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            :disabled="item.disabled">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="维修状态：" prop="maintenance">
-        <el-input v-model="value.maintenance"></el-input>
+<!--        <el-input v-model="value.maintenance"></el-input>-->
+        <el-select style="width: 100%;"  v-model="value.maintenance" placeholder="请选择">
+          <el-option
+            v-for="item in maintenanceOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            :disabled="item.disabled">
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="排序：" prop="sort">
         <el-input  v-model="value.sort"></el-input>
@@ -76,7 +103,34 @@
                 value: Object.assign({}, defaultRoomParam),
                 resetValue: Object.assign({}, defaultRoomParam),
                 rules: {
-                }
+                },
+                cleanOptions:[{
+                    value: 0,
+                    label: '未清洁'
+                }, {
+                    value: 1,
+                    label: '清洁中'
+                }, {
+                    value: 2,
+                    label: '已清洁'
+                }],
+                maintenanceOptions:[{
+                    value: 0,
+                    label: '未维修'
+                }, {
+                    value: 1,
+                    label: '维修中'
+                }, {
+                    value: 2,
+                    label: '维修完成'
+                }],
+                roomOptions: [{
+                    value: 1,
+                    label: '空闲'
+                }, {
+                    value: 0,
+                    label: '不可用'
+                }],
             }
         },
         created() {
