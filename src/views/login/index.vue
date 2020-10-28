@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="login-center-layout">
     <el-card class="login-form-layout">
       <el-form autoComplete="on"
                :model="loginForm"
@@ -46,13 +46,12 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <img :src="login_center_bg" class="login-center-layout">
     <el-dialog
       title="账号注册"
       :visible.sync="dialogVisible"
       :show-close="false"
       :center="true"
-      width="30%">
+      width="600px">
       <div style="text-align: center">
           <el-form
                    :rules="registerRules"
@@ -138,7 +137,7 @@
   import {register as handleRegister} from '@/api/register';
   import {isvalidUsername,isValidateMail} from '@/utils/validate';
   import {setSupport,getSupport,setCookie,getCookie} from '@/utils/support';
-  import login_center_bg from '@/assets/images/login_center_bg.png'
+  import login_center_bg from '@/assets/images/login.jpg'
 
   export default {
     name: 'login',
@@ -287,14 +286,7 @@
               this.loading = false;
               setCookie("username",this.loginForm.username,15);
               setCookie("password",this.loginForm.password,15);
-                getLoginInfo().then((response)=>{
-                    let roles=response.data.roles;
-                    if (roles.length===1&&roles[0].id===9){
-                        this.$router.push({path: '/front/index'})
-                    }else {
-                        this.$router.push({path: '/'});
-                    }
-                })
+                this.$router.push({path: '/'});
             }).catch(() => {
               this.loading = false
             })
@@ -305,8 +297,16 @@
         })
       },
       handleSentVerificationCode(){
+          if (!isValidateMail(this.registerForm.mail)){
+              this.$message({
+                  message: '请输入正确格式的邮箱',
+                  type: 'error',
+                  duration: 1000
+              });
+              return;
+          }
           this.disabled=true;
-          this.time=12;
+          this.time=300;
           this.timer=setInterval(()=>{
               this.time--;
               if (this.time<=0){
@@ -342,9 +342,10 @@
     position: absolute;
     left: 0;
     right: 0;
-    width: 360px;
-    margin: 140px auto;
-    border-top: 10px solid #409EFF;
+    width: 450px;
+    height: 400px;
+    margin: 10% auto;
+    /*border-top: 10px solid #409EFF;*/
   }
 
   .login-title {
@@ -352,12 +353,11 @@
   }
 
   .login-center-layout {
-    background: #409EFF;
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    margin-top: 200px;
+    background: url("../../assets/images/login.jpg");
+    background-size: 100%;
+    width: 100%;
+    height: 100%;
+    position: absolute;
   }
   .register-form{
     width: 100%

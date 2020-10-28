@@ -91,12 +91,12 @@ export const asyncRouterMap = [
     name: 'ums',
     meta: {title: '权限', icon: 'ums'},
     children: [
-      {
+ /*     {
         path: 'test',
         name: 'test',
         component: () => import('@/views/test'),
         meta: {title: '测试', icon: 'order'}
-      },
+      },*/
       {
         path: 'admin',
         name: 'admin',

@@ -63,11 +63,10 @@
       </el-row>
     </div>
     <div class="un-handle-content">
-
-      <el-form v-if="value!=null&&value.status!=null&&value.status===1" :model="key"  ref="roomInfoForm" label-width="120px" style="width: 800px;margin: auto;" size="small">
+      <el-form v-if="value!=null&&value.status!=null&&value.status===1" :model="key"  ref="roomInfoForm"  style="text-align: center;margin: 0 auto;" size="small">
         <el-form-item v-show="value.orderId" >
-          <el-button v-if="value.registerStatus===0||value.registerStatus===1" type="primary" size="medium" @click="checkIn.show=true">入住</el-button>
-          <el-button v-if="value.registerStatus===1" type="primary" size="medium" @click="handleCheckOut">退房</el-button>
+          <el-button style="margin: 20px 40px 20px 0" v-if="value.registerStatus===0||value.registerStatus===1" type="primary" size="medium" @click="checkIn.show=true">入住登记</el-button>
+          <el-button style="margin: 20px 20px 20px 20px" v-if="value.registerStatus===1" type="primary" size="medium" @click="handleCheckOut">退房</el-button>
         </el-form-item>
       </el-form>
     </div>

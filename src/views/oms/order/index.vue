@@ -254,6 +254,8 @@
           formatRegisterStatusTime(status){
               if (status===1){
                   return "已登记";
+              }else  if (status===2){
+                  return "已退房";
               }else {
                   return "未登记";
               }

@@ -16,6 +16,9 @@
       <el-form-item label="支付方式："  >
         {{value.payType | formatPayType}}
       </el-form-item>
+      <el-form-item label="登记状态："  >
+        {{value.registerStatus | formatRegisterStatusType}}
+      </el-form-item>
       <el-form-item label="订单状态："  >
         {{value.status | formatStatus}}
       </el-form-item>
@@ -147,6 +150,15 @@
                     return '现金';
                 }else {
                     return '未支付';
+                }
+            },
+            formatRegisterStatusType(value){
+                if (value === 1) {
+                    return '已登记';
+                } else if (value === 2) {
+                    return '已退房';
+                }else {
+                    return '未登记';
                 }
             },
             formatSourceType(value) {
