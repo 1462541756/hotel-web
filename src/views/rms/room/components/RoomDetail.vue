@@ -1,6 +1,8 @@
 <template> 
   <el-card class="form-container" shadow="never">
     <el-form :model="value" :rules="rules" ref="roomInfoForm" label-width="120px" style="width: 600px" size="small">
+      <h3 v-if="isEdit" style="margin-top: -20px" align="center">修改房间</h3>
+      <h3 v-else style="margin-top: -20px" align="center">创建房间</h3>
       <el-form-item label="房间名：" prop="name" >
         <el-input v-model="value.name" clearable></el-input>
       </el-form-item>

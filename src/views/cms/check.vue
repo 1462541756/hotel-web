@@ -132,8 +132,10 @@
                     return "已付款";
                 }else if (status===2){
                     return "已取消";
-                }else {
+                }else if(status===0){
                     return "未付款";
+                }else {
+                    return "";
                 }
             },
             formatRegisterStatus(status){
@@ -141,8 +143,10 @@
                     return "已登记入住";
                 }else if (status===2){
                     return "已退房";
-                }else {
+                }else if(status===0){
                     return "未登记";
+                }else{
+                    return "";
                 }
             },
             formatDateTime(time) {
@@ -227,7 +231,7 @@
     border: 1px solid #DCDFE6;
   }
   .layout-title {
-    margin-top: 40px;
+
     color: #606266;
     padding: 15px 20px;
     background: #F2F6FC;
@@ -240,7 +244,7 @@
     border: 1px solid #DCDFE6;
   }
   .table-layout {
-    margin-button: 20px;
+    margin-bottom: 40px;
     border-left: 1px solid #DCDFE6;
     border-top: 1px solid #DCDFE6;
   }

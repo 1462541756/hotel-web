@@ -166,7 +166,6 @@
             }
         };
         const validateCheck = (rule, value, callback) => {
-            debugger
             if (value==='') {
                 callback(new Error('请输入确认密码'))
             } else if (value!==this.registerForm.password){

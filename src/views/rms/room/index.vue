@@ -313,7 +313,6 @@
            this.$router.push({path:'/rms/updateRoom',query:{id:row.id}});
         },
         handleDeleteRoom(index,row){
-            this.listLoading = true;
             deleteRoomById(row.id).then(response => {
                 this.$message({
                     message: '房间删除成功',
@@ -321,7 +320,6 @@
                     duration: 1000
                 });
                 this.getList();
-                this.listLoading = false;
             });
         },
 

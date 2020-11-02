@@ -161,7 +161,7 @@ export const asyncRouterMap = [
   {
     path:'/cms' ,
     component: Layout,
-    redirect: '/cms/checkIn',
+    redirect: '/cms/checkList',
     name: 'cms',
     meta: {title: '权限', icon: 'ums'},
     children: [
@@ -176,6 +176,38 @@ export const asyncRouterMap = [
         name: 'checkList',
         component: () => import('@/views/cms/index'),
         meta: {title: '入住管理', icon: 'ums-admin'}
+      },
+    ]
+  },
+  {
+    path: '/ems',
+    component: Layout,
+    redirect: '/ems/event',
+    name: 'ems',
+    meta: {title: '事件管理', icon: 'event'},
+    children: [{
+      path: 'event',
+      name: 'event',
+      component: () => import('@/views/ems/index'),
+      meta: {title: '事件列表', icon: 'event-list'}
+    },
+      {
+        path: 'reportEvent',
+        name: 'reportEvent',
+        component: () => import('@/views/ems/report'),
+        meta: {title: '事件上报', icon: 'event-report'}
+      },
+      {
+        path: 'updateEvent',
+        name: 'updateEvent',
+        component: () => import('@/views/ems/update'),
+        meta: {title: '事件修改', icon: 'event-update'}
+      },
+      {
+        path: 'detailEvent',
+        name: 'detailEvent',
+        component: () => import('@/views/ems/detail'),
+        meta: {title: '事件详情', icon: 'event-detail'}
       },
     ]
   },

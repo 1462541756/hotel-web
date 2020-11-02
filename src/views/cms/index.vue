@@ -26,6 +26,9 @@
           <el-form-item label="身份证号：">
             <el-input style="width: 203px" v-model="listQuery.cardId" placeholder="身份证号"></el-input>
           </el-form-item>
+          <el-form-item label="订单号：">
+            <el-input style="width: 203px" v-model="listQuery.orderSn" placeholder="订单号"></el-input>
+          </el-form-item>
         </el-form>
       </div>
     </el-card>
@@ -40,7 +43,7 @@
             <template slot-scope="scope">{{scope.row.id}}</template>
           </el-table-column>
           <el-table-column label="订单号"  align="center" :show-overflow-tooltip="true">
-            <template slot-scope="scope">{{scope.row.orderId}}</template>
+            <template slot-scope="scope">{{scope.row.orderSn}}</template>
           </el-table-column>
           <el-table-column label="姓名"  align="center" :show-overflow-tooltip="true">
             <template slot-scope="scope">{{scope.row.name}}</template>
@@ -83,6 +86,7 @@
       pageSize: 5,
       name:null,
       cardId:null,
+      orderSn:null,
   };
     export default {
         name: "checkList",
@@ -125,6 +129,9 @@
             handleCurrentChange(val) {
                 this.listQuery.pageNum = val;
                 this.getList();
+            },
+            handleResetSearch() {
+                this.listQuery = Object.assign({}, defaultListQuery);
             },
         }
     }

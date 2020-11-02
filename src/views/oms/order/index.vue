@@ -116,7 +116,6 @@
         </el-table-column>
         <el-table-column label="操作" width="210" align="center">
           <template slot-scope="scope">
-            <p>
               <el-button
                 class="operate-button"
                 size="mini"
@@ -140,7 +139,6 @@
                          @click="handleCommit(scope.$index, scope.row)">线下支付
               </el-button>
 
-            </p>
           </template>
         </el-table-column>
       </el-table>
