@@ -41,6 +41,14 @@ export function createAdmin(data) {
   })
 }
 
+export function createAdmin2(data) {
+  return request({
+    url: '/admin/register2',
+    method: 'post',
+    data: data
+  })
+}
+
 export function updateAdmin(id, data) {
   return request({
     url: '/admin/update/' + id,

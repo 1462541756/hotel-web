@@ -27,7 +27,8 @@
           placeholder="请输入描述" clearable></el-input>
       </el-form-item>
       <el-form-item style="text-align: center">
-        <el-button type="primary" size="medium" @click.prevent="handleCommit">确认</el-button>
+        <el-button type="primary" size="medium" @click.prevent="handleCommit(0)">保存草稿</el-button>
+        <el-button type="primary" size="medium" @click.prevent="handleCommit(1)">直接上报</el-button>
         <el-button size="medium" @click="handleReset">重置</el-button>
       </el-form-item>
     </el-form>
@@ -116,12 +117,14 @@
 
         },
         methods:{
-            handleCommit(){
+            handleCommit(checkStatus){
                 this.$refs.eventReportForm.validate(valid => {
                     if (valid) {
-                        report(this.value).then(()=>{
+                        let params=this.value;
+                        params.checkStatus=checkStatus;
+                        report(params).then(()=>{
                             this.$message({
-                                message: '任务上报成功',
+                                message: '操作成功',
                                 type: 'success',
                                 duration: 1000
                             });

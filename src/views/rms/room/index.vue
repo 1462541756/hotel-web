@@ -39,7 +39,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="清洁状态：">
+       <!--   <el-form-item label="清洁状态：">
             <el-select v-model="listQuery.clean" placeholder="全部" clearable>
               <el-option
                 v-for="item in cleanOptions"
@@ -58,7 +58,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-          </el-form-item>
+          </el-form-item>-->
         </el-form>
       </div>
     </el-card>
@@ -95,12 +95,12 @@
         <el-table-column label="房间号" width="140" align="center" :show-overflow-tooltip="true">
           <template slot-scope="scope">{{scope.row.serial}}</template>
         </el-table-column>
-        <el-table-column label="清洁状态" width="140" align="center" :show-overflow-tooltip="true">
+      <!--  <el-table-column label="清洁状态" width="140" align="center" :show-overflow-tooltip="true">
           <template slot-scope="scope">{{getCleanLabel(scope.row.clean)}}</template>
         </el-table-column>
         <el-table-column label="维修" width="140" align="center" :show-overflow-tooltip="true">
           <template slot-scope="scope">{{getMaintenanceLabel(scope.row.maintenance)}}</template>
-        </el-table-column>
+        </el-table-column>-->
         <el-table-column label="描述"  align="center" :show-overflow-tooltip="true">
           <template slot-scope="scope">{{scope.row.description}}</template>
         </el-table-column>

@@ -129,7 +129,7 @@
                 @click="handleCancel(scope.$index, scope.row)">取消订单
               </el-button>
               <el-button class="operate-button"
-                         v-if="scope.row.status===1&&(scope.row.registerStatus===0 || scope.row.registerStatus===1)"
+                         v-if="scope.row.status===1"
                          size="mini"
                          @click="handleRegister(scope.$index, scope.row)">入住/退房
               </el-button>

@@ -7,9 +7,12 @@
         <img class="user-avatar" :src="avatar">
         <i class="el-icon-caret-bottom"></i>
       </div>
-      <el-dropdown-menu class="user-dropdown" slot="dropdown">
+      <el-dropdown-menu  class="user-dropdown" slot="dropdown">
+        <el-dropdown-item>
+          {{username}}
+        </el-dropdown-item>
         <router-link class="inlineBlock" to="/">
-          <el-dropdown-item>
+          <el-dropdown-item divided>
             首页
           </el-dropdown-item>
         </router-link>
@@ -25,12 +28,22 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import { getLoginInfo} from '@/api/admin'
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
+    data(){
+      return{
+          username:null
+      }
+    },
+    created(){
+       getLoginInfo().then((response)=>{
+           this.username=response.data.username;
+       })
+    },
   computed: {
     ...mapGetters([
       'sidebar',

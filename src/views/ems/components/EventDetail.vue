@@ -34,19 +34,19 @@
       <el-form-item label="审核时间：" prop="subject">{{value.checkTime|formatDateTime}}</el-form-item>
       <el-form-item label="事件状态：" prop="subject">{{value.status|formatStatus}}</el-form-item>
       <el-form-item label="事件处理人：" prop="subject">{{value.handlePeople}}</el-form-item>
-      <el-form-item label="事件处理时间：" prop="subject">{{value.receiveTime}}</el-form-item>
-      <el-form-item label="任务完成时间：" prop="subject">{{value.finishTime}}</el-form-item>
+      <el-form-item label="事件处理时间：" prop="subject">{{value.receiveTime|formatDateTime}}</el-form-item>
+      <el-form-item label="任务完成时间：" prop="subject">{{value.finishTime|formatDateTime}}</el-form-item>
       <el-form-item >
         <p>
           <el-button
-            v-if="(value.checkStatus===0||value.checkStatus===2) && value.reportPeople===user&&hashAuthority('/event/reportFromDraft/**')"
+            v-if="(value.checkStatus===0||value.checkStatus===2) && value.reportPeople===user&&hashAuthority('/event/reportFromDraft')"
             class="operate"
             size="mini"
             type="primary"
             @click="handleReportEvent">上报事件
           </el-button>
           <el-button
-            v-if="value.checkStatus===1 && value.reportPeople===user&&hashAuthority('/event/reportFromDraft/**')"
+            v-if="value.checkStatus===1 && value.reportPeople===user&&hashAuthority('/event/reportFromDraft')"
             class="operate"
             size="mini"
             type="warning"
@@ -54,21 +54,31 @@
           </el-button>
           <el-button
             class="operate"
-            v-if="value.checkStatus===1&&hashAuthority('/event/check/**')"
+            v-if="value.checkStatus===1&&hashAuthority('/event/check')"
             size="mini"
-            @click="handleCheckEvent">审核
+            type="success"
+            @click="handleCheckEvent">审核事件
           </el-button>
           <el-button
-            v-if="hashAuthority('/event/receive/**')&&value.checkStatus===3&&value.status===0"
+            v-if="hashAuthority('/event/changeStatus')&&value.checkStatus===3&&value.status===0"
             class="operate"
             size="mini"
-            @click="handleReceiveEvent">接收
+            type="primary"
+            @click="handleEvent(1)">接受任务
           </el-button>
           <el-button
-            v-if="hashAuthority('/event/commitFinish/**')&&value.checkStatus===3&&value.status===1"
+            v-if="hashAuthority('/event/changeStatus')&&value.checkStatus===3&&value.status===1"
             class="operate"
             size="mini"
-            @click="handleCommitEvent">提交完成
+            type="primary"
+            @click="handleEvent(2)">提交任务
+          </el-button>
+          <el-button
+            v-if="hashAuthority('/event/changeStatus')&&value.checkStatus===3&&value.status===1"
+            class="operate"
+            size="mini"
+            type="warning"
+            @click="handleEvent(0)">放弃任务
           </el-button>
         </p>
       </el-form-item>
@@ -102,17 +112,39 @@
           placeholder="请输入描述" clearable></el-input>
       </el-form-item>
       <el-form-item style="text-align: center">
-        <el-button type="primary" size="medium" @click.prevent="handleCommit">确认</el-button>
+        <el-button type="primary" size="medium" @click.prevent="handleCommit">保存</el-button>
+        <el-button v-if="value.checkStatus===0" type="primary" size="medium" @click.prevent="handleReportEvent">上报</el-button>
         <el-button size="medium" @click="handleReset">重置</el-button>
       </el-form-item>
-
     </el-form>
+
+    <el-dialog
+      title="审核"
+      :visible.sync="commit"
+      width="30%">
+      <el-input
+        :rows="4"
+        :autoSize="true"
+        v-model="checkOpinion"
+        type="textarea"
+        placeholder="请输入审核意见" clearable></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="handleCommitConfirm(3)" size="small">通过</el-button>
+        <el-button type="primary" @click="handleCommitConfirm(2)" size="small">不通过</el-button>
+        <el-button @click="commit = false" size="small">取 消</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
     import {
         getEventById,
+        reportFromDraft,
+        report,
+        cancelReportById,
+        check,
+        changeStatus,
     } from '@/api/event';
     import {getLoginInfo} from '@/api/admin';
     import MultiUpload from '@/components/Upload/multiUpload';
@@ -148,13 +180,14 @@
                     }
                 ],
                 pics:[],
+                commit:false,
+                checkOpinion:null,
             }
         },
         created() {
             this.getUserInfo();
             if (this.$route.query.id!==null){
                 this.getEvent();
-                console.log(this.value.checkStatus===1&&hashAuthority('/event/check/**'))
             }
         },
         computed:{
@@ -219,30 +252,86 @@
         },
         methods:{
             hashAuthority(url){
-              let resources=  this.userInfo.resources;
+
+                let resources=  this.userInfo.resources;
                 for (let i = 0; i < resources.length; i++) {
                     let item=resources[i].url;
-                    if ("/event/**"===item||url===item){
+                    if ("/event/**"===item||url===item||(url+"/**")===item){
                         return true;
                     }
                 }
                 return false;
             },
             handleCommit(){
-                this.$refs.eventReportForm.validate(valid => {
+                this.$refs.eventForm.validate(valid => {
                     if (valid) {
-                        report(this.value).then(()=>{
+                        let params=this.value;
+                        report(params).then(()=>{
                             this.$message({
-                                message: '任务上报成功',
+                                message: '修改成功',
                                 type: 'success',
                                 duration: 1000
                             });
-                            this.handleReset()
+                            this.$router.push({path:'/ems/event'})
                         });
                     }else {
                         console.log('参数验证不合法！');
                     }
                 });
+            },
+            handleCommitConfirm(checkStatus){
+                this.$confirm('是否要确认?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let params = this.value;
+                    params.checkOpinion=this.checkOpinion;
+                    params.checkStatus=checkStatus;
+                    check(params).then(response => {
+                        this.$message({
+                            message: '操作成功！',
+                            type: 'success'
+                        });
+                        this.commit = false;
+                        this.$router.push({path:'/ems/event'})
+                    })
+                })
+            },
+            handleReportEvent(){
+                reportFromDraft(this.value.id).then(response => {
+                    this.$message({
+                        message: '上报成功',
+                        type: 'success',
+                        duration: 1000
+                    });
+                    this.$router.push({path:'/ems/event'})
+                });
+            },
+            handleCancelEvent(){
+                cancelReportById(this.value.id).then(response => {
+                    this.$message({
+                        message: '取消上报成功',
+                        type: 'success',
+                        duration: 1000
+                    });
+                    this.$router.push({path:'/ems/event'})
+                });
+            },
+            handleCheckEvent(){
+                this.commit=true;
+            },
+            handleEvent(status){
+                let params=this.value;
+                params.status=status;
+                changeStatus(params).then((response)=>{
+                    this.$message({
+                        message: '处理任务成功',
+                        type: 'success',
+                        duration: 1000
+                    });
+                    this.$router.push({path:'/ems/event'})
+                })
             },
             handleReset(){
                 this.getEvent()
@@ -256,7 +345,6 @@
             getUserInfo(){
                 getLoginInfo().then((response)=>{
                     this.userInfo=response.data;
-                    console.log(response.data)
                     this.user=response.data.username;
                 });
             },

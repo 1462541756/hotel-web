@@ -47,17 +47,21 @@ export function reportFromDraft(id) {
     method: 'post',
   })
 }
-//接收
-export function receive(id) {
+
+
+//审核
+export function check(data) {
   return request({
-    url: '/event/receive/'+id,
+    url: '/event/check',
     method: 'post',
+    data: data
   })
 }
-//提交完成
-export function commit(id) {
+//改变任务状态：接受任务、取消任务、提交完成任务
+export function changeStatus(data) {
   return request({
-    url: '/event/commit/'+id,
+    url: '/event/changeStatus',
     method: 'post',
+    data: data
   })
 }

@@ -27,8 +27,8 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="清洁状态：" prop="clean">
-<!--        <el-input v-model="value.clean"></el-input>-->
+ <!--     <el-form-item label="清洁状态：" prop="clean">
+&lt;!&ndash;        <el-input v-model="value.clean"></el-input>&ndash;&gt;
         <el-select style="width: 100%;"  v-model="value.clean" placeholder="请选择">
           <el-option
             v-for="item in cleanOptions"
@@ -40,7 +40,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="维修状态：" prop="maintenance">
-<!--        <el-input v-model="value.maintenance"></el-input>-->
+&lt;!&ndash;        <el-input v-model="value.maintenance"></el-input>&ndash;&gt;
         <el-select style="width: 100%;"  v-model="value.maintenance" placeholder="请选择">
           <el-option
             v-for="item in maintenanceOptions"
@@ -50,7 +50,7 @@
             :disabled="item.disabled">
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="排序：" prop="sort">
         <el-input  v-model="value.sort"></el-input>
       </el-form-item>

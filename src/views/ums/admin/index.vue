@@ -145,14 +145,14 @@
         </el-option>
       </el-select>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="allocDialogVisible = false" size="small">取 消</el-button>
         <el-button type="primary" @click="handleAllocDialogConfirm()" size="small">确 定</el-button>
+        <el-button @click="allocDialogVisible = false" size="small">取 消</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
-  import {fetchList,createAdmin,updateAdmin,updateStatus,deleteAdmin,getRoleByAdmin,allocRole} from '@/api/login';
+  import {fetchList,createAdmin,createAdmin2,updateAdmin,updateStatus,deleteAdmin,getRoleByAdmin,allocRole} from '@/api/login';
   import {fetchAllRoleList} from '@/api/role';
   import {formatDate} from '@/utils/date';
 
@@ -278,7 +278,7 @@
               this.getList();
             })
           } else {
-            createAdmin(this.admin).then(response => {
+            createAdmin2(this.admin).then(response => {
               this.$message({
                 message: '添加成功！',
                 type: 'success'

@@ -74,7 +74,7 @@
           <template slot-scope="scope">{{scope.row.createTime|formatDateTime}}</template>
         </el-table-column>
 
-        <el-table-column label="操作" width="200" align="center">
+        <el-table-column label="操作" width="190" align="center">
           <template slot-scope="scope">
             <p>
               <el-button
@@ -87,10 +87,17 @@
                 class="operate"
                 size="mini"
                 type="primary"
-                @click="handleEditEvent(scope.$index, scope.row)">编辑
+                @click="handleEditEvent(scope.$index, scope.row)">编辑事件
               </el-button>
               <el-button
-                v-if="(scope.row.checkStatus===0||scope.row.checkStatus===2) && scope.row.reportPeople===user&&hashAuthority('/event/reportFromDraft/**')"
+                class="operate"
+                v-if="scope.row.checkStatus===1&&hashAuthority('/event/check')"
+                size="mini"
+                type="success"
+                @click="handleCheckEvent(scope.$index, scope.row)">审核事件
+              </el-button>
+              <el-button
+                v-if="(scope.row.checkStatus===0||scope.row.checkStatus===2) && scope.row.reportPeople===user&&hashAuthority('/event/reportFromDraft')"
                 class="operate"
                 size="mini"
                 type="primary"
@@ -105,25 +112,32 @@
               </el-button>
 
               <el-button
-                v-if="scope.row.status===0 && scope.row.checkStatus===3"
+                v-if="hashAuthority('/event/changeStatus')&&scope.row.checkStatus===3&&scope.row.status===0"
                 class="operate"
                 size="mini"
                 type="primary"
-                @click="handleReceiveEvent(scope.$index, scope.row)">接收
+                @click="handleEvent(scope.$index, scope.row,1)">接受任务
               </el-button>
               <el-button
-                v-if="scope.row.status===1 && scope.row.checkStatus===3"
+                v-if="hashAuthority('/event/changeStatus')&&scope.row.checkStatus===3&&scope.row.status===1&& scope.row.handlePeople===user"
+                class="operate"
+                size="mini"
+                type="primary"
+                @click="handleEvent(scope.$index, scope.row,2)">提交任务
+              </el-button>
+              <el-button
+                v-if="hashAuthority('/event/changeStatus')&&scope.row.checkStatus===3&&scope.row.status===1&& scope.row.reportPeople===user"
                 class="operate"
                 size="mini"
                 type="warning"
-                @click="handleCommitEvent(scope.$index, scope.row)">提交完成
+                @click="handleEvent(scope.$index, scope.row,0)">放弃任务
               </el-button>
-
               <el-button
+                v-if="(scope.row.checkStatus===0||scope.row.checkStatus===null) && scope.row.reportPeople===user&&hashAuthority('/event/deleteEventById')"
                 class="operate"
                 size="mini"
                 type="danger"
-                @click="handleDeleteEvent(scope.$index, scope.row)">删除
+                @click="handleDeleteEvent(scope.$index, scope.row)">删除事件
               </el-button>
             </p>
           </template>
@@ -152,6 +166,7 @@
         deleteEventById,
         cancelReportById,
         report,
+        changeStatus,
         reportFromDraft
     } from '@/api/event';
     import {
@@ -214,7 +229,7 @@
                 let resources=  this.userInfo.resources;
                 for (let i = 0; i < resources.length; i++) {
                     let item=resources[i].url;
-                    if ("/event/**"===item||url===item){
+                    if ("/event/**"===item||url===item||(url+"/**")===item){
                         return true;
                     }
                 }
@@ -225,6 +240,13 @@
                     this.userInfo=response.data;
                     this.user=response.data.username;
                 });
+            },
+            handleSearchList() {
+                this.listQuery.pageNum = 1;
+                this.getList();
+            },
+            handleResetSearch() {
+                this.listQuery = Object.assign({}, defaultListQuery);
             },
             getList() {
                 this.listLoading = true;
@@ -242,6 +264,9 @@
             },
             handleEditEvent(index,row){
                 this.$router.push({path:"/ems/updateEvent",query:{id:row.id}})
+            },
+            handleCheckEvent(index,row){
+                this.$router.push({path:"/ems/detailEvent",query:{id:row.id}});
             },
             handleReportEvent(index,row){
 
@@ -263,6 +288,18 @@
                     });
                     this.getList();
                 });
+            },
+            handleEvent(index,row,status){
+                let params=row;
+                params.status=status;
+                changeStatus(params).then((response)=>{
+                    this.$message({
+                        message: '处理任务成功',
+                        type: 'success',
+                        duration: 1000
+                    });
+                    this.$router.push({path:'/ems/event'})
+                })
             },
             handleDeleteEvent(index,row){
                 deleteEventById(row.id).then(response => {

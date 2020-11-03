@@ -63,7 +63,7 @@
       </el-row>
     </div>
     <div class="un-handle-content">
-      <el-form v-if="value!=null&&value.status!=null&&value.status===1" :model="key"  ref="roomInfoForm"  style="text-align: center;margin: 0 auto;" size="small">
+      <el-form v-if="value!=null&&value.status!=null&&value.status===1" :model="key"  ref="checkForm"  style="text-align: center;margin: 0 auto;" size="small">
         <el-form-item v-show="value.orderId" >
           <el-button style="margin: 20px 40px 20px 0" v-if="value.registerStatus===0||value.registerStatus===1" type="primary" size="medium" @click="checkIn.show=true">入住登记</el-button>
           <el-button style="margin: 20px 20px 20px 20px" v-if="value.registerStatus===1" type="primary" size="medium" @click="handleCheckOut">退房</el-button>
@@ -176,7 +176,7 @@
                     return;
                 }
                 let params={
-                    "orderId":this.value.orderId,
+                    "orderSn":this.value.orderSn,
                     "name":this.checkIn.name,
                     "cardId": this.checkIn.cardId,
                 };
@@ -214,6 +214,8 @@
                 let params={"orderSn":this.orderSn};
                 getDetail(params).then((response)=>{
                     this.value=response.data;
+                    console.log(this.value!=null&&this.value.status!=null&&this.value.status===1)
+                    console.log(this.value.registerStatus===0||this.value.registerStatus===1)
                     this.$message({
                         message: '查询订单成功',
                         type: 'success',
