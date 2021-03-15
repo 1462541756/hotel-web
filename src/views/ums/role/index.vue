@@ -96,7 +96,7 @@
         layout="total, sizes,prev, pager, next,jumper"
         :current-page.sync="listQuery.pageNum"
         :page-size="listQuery.pageSize"
-        :page-sizes="[5,10,15]"
+        :page-sizes="[10,15,20]"
         :total="total">
       </el-pagination>
     </div>
@@ -136,7 +136,7 @@
 
   const defaultListQuery = {
     pageNum: 1,
-    pageSize: 5,
+    pageSize: 10,
     keyword: null
   };
   const defaultRole = {
